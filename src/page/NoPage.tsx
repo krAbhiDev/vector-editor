@@ -1,5 +1,9 @@
+import PageBox from "../components/PageBox";
+
 export default function NoPage() {
     return (
-        <div>Not found</div>
+        <PageBox>
+            <div className="text-orange-300 text-xl font-bold">Not found</div>
+        </PageBox>
     );
 }

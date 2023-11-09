@@ -7,7 +7,7 @@
     @apply bg-blue-500 active:bg-blue-700 hover:bg-blue-600 text-white font-medium py-1 px-2;
   }
   .link {
-    @apply bg-orange-200 hover:bg-orange-300 px-2 py-1 rounded;
+    @apply  active:ring bg-orange-200 hover:bg-orange-300 px-2 py-1 rounded;
   }
 }
 .canvas-wrapper {
