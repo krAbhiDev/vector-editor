@@ -13,31 +13,15 @@ export default function PaperCanvas(props: Props) {
     const paperScope = props.paperScopeRef.current;
     if (!canvas) return;
     paperScope.setup(canvas);
+
+    const resizeCallback = () => {
+      paperScope.view.viewSize.set(canvas.width, canvas.height);
+    };
+    window.addEventListener("resize", resizeCallback);
     return () => {
       paperScope.view.remove();
+      window.removeEventListener("resize", resizeCallback);
     };
   }, [props.paperScopeRef, canvasRef]);
   return <AutoCanvas canvasRef={canvasRef} />;
 }
-[
-  {
-      "x": 225,
-      "y": 175
-  },
-  {
-      "x": 244,
-      "y": 50
-  },
-  {
-      "x": 373,
-      "y": 48
-  },
-  {
-      "x": 399,
-      "y": 108
-  },
-  {
-      "x": 363,
-      "y": 223
-  }
-]
