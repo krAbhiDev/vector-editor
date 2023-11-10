@@ -3,10 +3,12 @@ export class Point {
         public x: number = 0,
         public y: number = 0
     ) { }
+
 }
 function cross(a: Point, b: Point, o: Point) {
     return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
 }
+//https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain#JavaScript
 export function convexHull(points_: Point[]): Point[] {
     const points = [...points_]
     points.sort(function (a, b) {
