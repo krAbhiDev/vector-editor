@@ -27,12 +27,24 @@ export default function PaperDemo() {
       console.log({ segments: shape.segments });
 
       const clone = shape.clone();
-      clone.smooth()
+      clone.smooth();
       clone.fullySelected = true;
       clone.position.x += 100;
-      console.log({ clone: clone});
+      console.log({ clone: clone });
     }
-    
+    {
+      const shape = new ps.Path.Line([100, 20], [300, 100]);
+      shape.strokeColor = black;
+      shape.selected = true;
+      console.log({ segments: shape.segments });
+
+      const clone = shape.clone();
+      clone.add([100, 100]);
+     clone.smooth({type:"continuous"});
+      clone.selected = false;
+      clone.position.x += 100;
+      console.log({ clone: clone });
+    }
   }, []);
 
   return (
