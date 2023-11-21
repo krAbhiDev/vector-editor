@@ -40,7 +40,7 @@ export default function PaperDemo() {
 
       const clone = shape.clone();
       clone.add([100, 100]);
-     clone.smooth({type:"continuous"});
+      clone.smooth({ type: "continuous" });
       clone.selected = false;
       clone.position.x += 100;
       console.log({ clone: clone });

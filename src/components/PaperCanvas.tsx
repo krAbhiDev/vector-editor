@@ -2,10 +2,10 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import AutoCanvas from "./AutoCanvas";
 import paper from "paper/dist/paper-core";
 export type PaperScope = paper.PaperScope;
-interface Props {
+export interface PaperCanvasProps {
   paperScopeRef: MutableRefObject<paper.PaperScope | null>;
 }
-export default function PaperCanvas(props: Props) {
+export default function PaperCanvas(props: PaperCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
