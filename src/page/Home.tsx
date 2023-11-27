@@ -4,10 +4,12 @@ import pages from "./pages";
 
 export default function Home() {
   return (
-    <PageBox>
-      {pages.map(({ name },i) => (
-        <Link className="link" key={i} to={"/" + name}>{name}</Link>
+    <div className="flex items-center flex-wrap justify-center   p-2 space-x-1  space-y-1">
+      {pages.map(({ name }, i) => (
+        <Link className="link block" key={i} to={"/" + name}>
+          {name}
+        </Link>
       ))}
-    </PageBox>
+    </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Point, convexHull } from "../others/math";
+import { convexHull } from "../others/math";
 import PaperCanvas, { PaperScope } from "../components/PaperCanvas";
 import Panel from "../components/Panel";
 import { randomRange, repeat } from "../others/utils";
+import Point from "../others/Point";
 
 export default function ConvexHull() {
   const paperRef = useRef<PaperScope | null>(null);

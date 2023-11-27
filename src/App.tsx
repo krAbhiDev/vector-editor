@@ -9,7 +9,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Outlet />}>
+        <Route path="/" element={<Outlet  />}>
           <Route index element={<Home />} />
           {pages.map(({ name, component: E },i) => (
             <Route key={i} path={name} element={<E />} />

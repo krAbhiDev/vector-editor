@@ -2,9 +2,8 @@
 
 import AutoCanvas from "../components/AutoCanvas";
 import { useEffect, useRef, useState } from "react";
-class Point {
-  constructor(public x: number = 0, public y: number = 0) {}
-}
+import Point from "../others/Point";
+
 export default function PanZoom() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
