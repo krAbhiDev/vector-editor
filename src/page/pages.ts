@@ -5,6 +5,7 @@ import ConvexHull from "./ConvexHull"
 import MathEval from "./MathEval"
 import VectorApp from "./VectorApp"
 import Triangulation from "./Triangulation"
+import ObjectEditor from "./ObjectEditor"
 
 type PageItem = {
     name: string
@@ -17,6 +18,7 @@ const pages: PageItem[] = [
     { name: "math-eval", component: MathEval },
     { name: "vector-app", component: VectorApp },
     { name: "triangulation", component: Triangulation },
+    { name: "object-editor", component: ObjectEditor },
 
 ]
 
