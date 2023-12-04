@@ -1,4 +1,5 @@
 import Point from "./Point";
+import { rad2deg } from "./utils";
 
 function cross(a: Point, b: Point, o: Point) {
     return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
