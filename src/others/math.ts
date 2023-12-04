@@ -55,3 +55,9 @@ export function triangulatePolyline(points: Point[], strokeWidth: number): Point
 
     return trianglePoints;
 }
+export function triangulatePolylineInMiter(points: Point[], strokeWidth: number): Point[] {
+    const trianglePoints: Point[] = [];
+    const halfWidth = strokeWidth * 0.5
+
+    return trianglePoints;
+}
