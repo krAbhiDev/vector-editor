@@ -3,9 +3,9 @@ import PanZoom from "./PanZoom"
 import PaperDemo from "./PaperDemo"
 import ConvexHull from "./ConvexHull"
 import MathEval from "./MathEval"
-import VectorApp from "./VectorApp"
 import Triangulation from "./Triangulation"
 import ObjectEditor from "./ObjectEditor"
+import VectorApp from "../vector-editor/VectorApp"
 
 type PageItem = {
     name: string
@@ -16,9 +16,9 @@ const pages: PageItem[] = [
     { name: "paper-demo", component: PaperDemo },
     { name: "convex-hull", component: ConvexHull },
     { name: "math-eval", component: MathEval },
-    { name: "vector-app", component: VectorApp },
     { name: "triangulation", component: Triangulation },
     { name: "object-editor", component: ObjectEditor },
+    { name: "vector-app", component: VectorApp },
 
 ]
 
