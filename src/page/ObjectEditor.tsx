@@ -40,7 +40,7 @@ function ToggleItem({ obj, name }: { obj: any; name: string }) {
   );
 }
 function TreeView({}: any) {
-  const [shapes, setShapes] = useState({
+  const [shapes, setShapes] = useState<any>({
     count: 2,
     circle: {
       radius: 10,
@@ -58,8 +58,9 @@ function TreeView({}: any) {
 
   useEffect(() => {
     for (let i = 0; i < 10; i++) {
-      setShapes((old) => ({ ...old, old: old }));
+      setShapes((old: any) => ({ ...old, old: old }));
     }
+    setShapes([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
   }, []);
   console.log(shapes);
   return (

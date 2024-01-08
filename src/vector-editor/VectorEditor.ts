@@ -56,9 +56,9 @@ export class Property<T> {
 }
 
 export class Shape {
-  x: Property<number> = new Property(0, "number", "x");
-  y: Property<number> = new Property(0, "number", "y");
-  color: Property<string> = new Property("#000000", "color", "color");
+  x = new Property(0, "number", "x");
+  y = new Property(0, "number", "y");
+  color = new Property("#000000", "color", "color");
   constructor() {
     this.x.value = 0;
   }
@@ -67,8 +67,8 @@ export class Shape {
   }
 }
 export class Circle extends Shape {
-  radius: Property<number> = new Property(0, "number", "radius");
-  isFill: Property<boolean> = new Property(false, "boolean", "isFill");
+  radius = new Property(0, "number", "radius");
+  isFill = new Property(false, "boolean", "isFill");
   constructor() {
     super();
   }
@@ -77,8 +77,8 @@ export class Circle extends Shape {
   }
 }
 export class Rectangle extends Shape {
-  width: Property<number> = new Property(0, "number", "width");
-  height: Property<number> = new Property(0, "number", "height");
+  width = new Property(0, "number", "width");
+  height = new Property(0, "number", "height");
   constructor() {
     super();
   }
@@ -87,8 +87,8 @@ export class Rectangle extends Shape {
   }
 }
 export class Line extends Shape {
-  x2: Property<number> = new Property(0, "number", "x2");
-  y2: Property<number> = new Property(0, "number", "y2");
+  x2 = new Property(0, "number", "x2");
+  y2 = new Property(0, "number", "y2");
   constructor() {
     super();
   }
