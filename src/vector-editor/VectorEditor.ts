@@ -54,10 +54,11 @@ export class Property<T> {
     });
   }
 }
-
+export class ArrayProperty<T> extends Property<T> {}
 export class Shape {
   x = new Property(0, "number", "x");
   y = new Property(0, "number", "y");
+  colors = new Property(["#000000"], "color", "colors");
   color = new Property("#000000", "color", "color");
   constructor() {
     this.x.value = 0;
@@ -109,6 +110,11 @@ export class Tool {
 export class Plugin {
   onActivate(editor: VectorEditor) {}
   onDeActivate() {}
+  onCreateProperty(property: Object) {
+    //create observer for property
+    //return html node
+
+  }
 }
 
 export class Panel {
@@ -122,6 +128,7 @@ export class Panel {
       this.htmlDiv.innerHTML = "";
     }
   }
+  update() {}
 }
 
 export class PropertyPanel extends Panel {
@@ -138,17 +145,9 @@ export class PropertyPanel extends Panel {
   }
   setSelectedShape(shape: Shape | undefined) {
     if (shape === this.selectedShape) return;
-    this.removeAllObservers();
+    // this.removeAllObservers();
     this.selectedShape = shape;
-    //clear dom
-    this.clearHtml();
-    //add observers and creating property html
-    if (shape) {
-      shape.getProperties().forEach((property) => {
-        property.removeDeadObservers();
-        this.createPropertyHtml(property);
-      });
-    }
+    this.update();
   }
 
   protected removeAllObservers() {
@@ -163,7 +162,65 @@ export class PropertyPanel extends Panel {
     this.observers = [];
   }
 
+  override update() {
+    //clear
+    this.clearHtml();
+    //delete all observers
+    this.removeAllObservers();
+    //create fresh html and event listeners
+    if (this.selectedShape) {
+      this.selectedShape.getProperties().forEach((property) => {
+        this.createPropertyHtml(property);
+      });
+    }
+  }
   private createPropertyHtml(property: Property<any>) {
+    const div = document.createElement("div");
+    div.className = "flex flex-row gap-1";
+
+    const label = document.createElement("label");
+    label.className = " max-w-[50px] min-w-[50px]";
+    label.innerText = property.name;
+    div.appendChild(label);
+
+    const getType = () => {
+      switch (property.type) {
+        case "boolean":
+          return "checkbox";
+        case "number":
+          return "number";
+        case "color":
+          return "color";
+      }
+      return "string";
+    };
+    const type = getType();
+    const input = document.createElement("input");
+    input.className = "w-full ";
+    input.value = property.value;
+    input.type = type;
+    if (type === "number" || type === "string") {
+      input.addEventListener("input", (e: any) => {
+        property.value = e.target.value;
+      });
+    } else if (type === "checkbox") {
+      input.checked = property.value;
+      input.addEventListener("input", (e: any) => {
+        property.value = e.target.checked;
+      });
+    } else if (type === "color") {
+      input.addEventListener("input", (e: any) => {
+        property.value = e.target.value;
+      });
+    }
+    div.appendChild(input);
+
+    this.htmlDiv?.appendChild(div);
+  }
+
+  private reCreatePropertyHtml(property: Property<any>) {
+    //clear dom
+    this.clearHtml();
     const div = document.createElement("div");
     div.className = "flex flex-row gap-1";
 
@@ -194,6 +251,7 @@ export class PropertyPanel extends Panel {
           property.value = e.target.value;
         });
       } else if (type === "checkbox") {
+        input.checked = property.value;
         input.addEventListener("input", (e: any) => {
           property.value = e.target.checked;
         });
@@ -215,6 +273,12 @@ export class PropertyPanel extends Panel {
 
     this.htmlDiv?.appendChild(div);
   }
+  setPropertyNode(node: any) {}
+}
+class PropertyUI {
+  addButton() {}
+  addGroup() {}
+  addCheckbox() {}
 }
 
 export class EditorPanel extends Panel {
@@ -273,6 +337,7 @@ export default class VectorEditor extends VectorEditorState {
       setTimer(
         (times: number) => {
           shape.x.value = times * 10;
+          this.propertyPanel.update();
         },
         1000,
         0,
@@ -283,6 +348,7 @@ export default class VectorEditor extends VectorEditorState {
             (times: number) => {
               circle.radius.value = times * 10;
               circle.isFill.value = !circle.isFill.value;
+              this.propertyPanel.update();
             },
             1000,
             0,
@@ -336,4 +402,12 @@ export default class VectorEditor extends VectorEditorState {
 
   //events
   protected onDraw(render: Render) {}
+
+  protected onCreateProperty(property: Object) {
+    this.plugins.forEach((plugin) => {
+      plugin.onCreateProperty(property);
+    });
+    //add ui to property panel
+
+  }
 }

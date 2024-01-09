@@ -6,22 +6,10 @@ import VectorEditor, {
   Shape,
 } from "./VectorEditor";
 import { setTimer } from "../others/utils";
+import { annotationTest } from "./annotation";
 
-function PropertyPanelTest() {
-  // useEffect(() => {
-  //   const x = new Property(100, "number", "x");
-  //   const xObserver = (value: any) => {
-  //     console.log("x", value);
-  //   };
-  //   const id = x.addObserver(xObserver);
-  //   x.value = 200;
-  //   x.value = 300;
-  //   x.value = 400;
-  //   console.log(x);
-  //   id.remove()
-  // }, []);
-
-  useEffect(() => {
+function Test() {
+  function shapeTest() {
     const shape = new Shape();
     const circle = new Circle();
     const panel = new PropertyPanel();
@@ -56,20 +44,34 @@ function PropertyPanelTest() {
         );
       }
     );
+  }
+  function arrayTest() {
+    const colors = new Property<string[]>([], "color", "colors");
+    colors.addObserver((value) => {
+      console.log("colors", value);
+    });
+    setTimer((t) => {
+      if (t > 5) {
+        colors.value.pop();
+      } else {
+        colors.value.push("red" + t);
+      }
+    }, 1000);
+  }
+
+
+  useEffect(() => {
+    // arrayTest();
+    annotationTest();
   }, []);
   return <div></div>;
 }
-export default function VectorApp() {
+export function _VectorApp() {
   const mainRef = useRef<HTMLDivElement | null>(null);
   const editor = useRef<VectorEditor>();
   useEffect(() => {
     editor.current = new VectorEditor(mainRef.current!);
   }, []);
-  // return (
-  //   <>
-  //     <PropertyPanelTest />
-  //   </>
-  // );
 
   return (
     <div
@@ -96,5 +98,12 @@ export default function VectorApp() {
         <div className="bg-blue-200 w-[200px] "></div>
       </div>
     </div>
+  );
+}
+export default function VectorApp() {
+  return (
+    <>
+      <Test />
+    </>
   );
 }
