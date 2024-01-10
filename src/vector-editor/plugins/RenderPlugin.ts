@@ -22,7 +22,7 @@ export class RenderPlugin extends Plugin {
   protected onPreDraw(render: Render): void {}
   protected onPostDraw(render: Render): void {}
 
-  protected  onSelectedToolChange(tool?: Tool | undefined): void {
-    console.log("RenderPlugin::onSelectedToolChange",tool)
+  protected onSelectedToolChange(tool?: Tool | undefined): void {
+    console.log("RenderPlugin::onSelectedToolChange", tool);
   }
 }

@@ -24,7 +24,7 @@ export class EditorPanel extends Panel {
     window.addEventListener("resize", () => {
       canvas.width = htmlDiv.clientWidth - 2;
       canvas.height = htmlDiv.clientHeight - 2;
-      render.clear();
+      
     });
     //create context
     const ctx = canvas.getContext("2d");
@@ -47,5 +47,9 @@ export class EditorPanel extends Panel {
   get render() {
     if (!this._render) throw new Error("render is undefined");
     return this._render;
+  }
+  get canvas() {
+    if (!this._canvas) throw new Error("canvas is undefined");
+    return this._canvas;
   }
 }

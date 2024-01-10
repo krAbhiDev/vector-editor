@@ -26,7 +26,7 @@ export default function PanZoom() {
       canvas.setPointerCapture(e.pointerId);
 
       points.push(screenToWorld(down));
-      onDraw()
+      onDraw();
     });
     canvas.addEventListener("pointerup", (e) => {
       isDragging = false;

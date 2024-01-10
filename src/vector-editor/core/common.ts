@@ -1,3 +1,6 @@
+import { Color } from "../../others/Color";
+import Point from "../../others/Point";
+
 export type BaseEventType =
   | "onMouseDown"
   | "onMouseMove"
@@ -17,24 +20,23 @@ export type BaseEventType =
   | "onPreDraw"
   | "onDraw"
   | "onPostDraw"
-  | "onInitProperty"
+  | "onInitProperty";
 
 abstract class BaseEvent {
-  protected onMouseDown(e: PointerEvent) {}
-  protected onMouseMove(e: PointerEvent) {}
-  protected onMouseUp(e: PointerEvent) {}
-  protected onMouseLeave(e: PointerEvent) {}
-  protected onMouseEnter(e: PointerEvent) {}
-  protected onMouseWheel(e: WheelEvent) {}
-  protected onClick(e: MouseEvent) {}
+  protected onMouseDown(e: EditorMouseEvent) {}
+  protected onMouseMove(e: EditorMouseEvent) {}
+  protected onMouseUp(e: EditorMouseEvent) {}
+  protected onMouseLeave(e: EditorMouseEvent) {}
+  protected onMouseEnter(e: EditorMouseEvent) {}
+  protected onMouseWheel(e: EditorWheelEvent) {}
   //keyEvent
-  protected onKeyDown(e: KeyboardEvent) {}
-  protected onKeyUp(e: KeyboardEvent) {}
-  protected onKeyPress(e: KeyboardEvent) {}
+  protected onKeyDown(e: EditorKeyEvent) {}
+  protected onKeyUp(e: EditorKeyEvent) {}
+  protected onKeyPress(e: EditorKeyEvent) {}
   //mouse drag event
-  protected onMouseDragStart(e: PointerEvent) {}
-  protected onMouseDrag(e: PointerEvent) {}
-  protected onMouseDragEnd(e: PointerEvent) {}
+  protected onMouseDragStart(e: EditorMouseEvent) {}
+  protected onMouseDrag(e: EditorMouseEvent) {}
+  protected onMouseDragEnd(e: EditorMouseEvent) {}
 
   //callback
   // protected onSelectedShapeChange(shape?: Shape) {}
@@ -44,4 +46,32 @@ abstract class BaseEvent {
   sendMessage(type: BaseEventType, ...args: any) {
     this.onMessage(type, args);
   }
+}
+export interface EditorMouseEvent {
+  x: number;
+  y: number;
+  pe: PointerEvent;
+}
+export interface EditorWheelEvent {
+  x: number;
+  y: number;
+  we: WheelEvent;
+  direction: "up" | "down";
+}
+
+export interface EditorKeyEvent {
+  ke: KeyboardEvent;
+}
+
+export interface EditorProperties {
+  documentWidth: number;
+  documentHeight: number;
+  backgroundColor: Color;
+  zoom: number;
+  maxZoom: number;
+  minZoom: number;
+  grid: boolean;
+  gridColor: Color;
+  isDragging: boolean;
+  panOffset: Point;
 }

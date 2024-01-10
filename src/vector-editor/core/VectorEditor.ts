@@ -8,7 +8,14 @@ import { Panel } from "./Panel";
 import { PropertyPanel } from "./panels/PropertyPanel";
 import { EditorPanel } from "./panels/EditorPanel";
 import { ToolPanel } from "./panels/ToolPanel";
-import { BaseEventType } from "./common";
+import {
+  BaseEventType,
+  EditorMouseEvent,
+  EditorProperties,
+  EditorWheelEvent,
+} from "./common";
+import { Color } from "../../others/Color";
+import Point from "../../others/Point";
 
 export abstract class EditorStateAndEvent extends Panel {
   protected _plugins: Map<string, Plugin> = new Map();
@@ -16,10 +23,32 @@ export abstract class EditorStateAndEvent extends Panel {
   protected _tools: Tool[] = [];
   protected _selectedTool?: Tool = undefined;
   protected _selectedShape?: Shape = undefined;
+
   //panels
   protected editorPanel = new EditorPanel();
   protected toolPanel = new ToolPanel(this);
   protected propertyPanel = new PropertyPanel();
+
+  //document
+  protected _properties: EditorProperties = {
+    documentWidth: 500,
+    documentHeight: 500,
+    backgroundColor: Color.fromHex("#eeaaee"),
+    zoom: 1,
+    maxZoom: 8,
+    minZoom: 0.1,
+    grid: false,
+    gridColor: Color.fromHex("#000000"),
+    isDragging: false,
+    panOffset: new Point(),
+  };
+  get properties(): EditorProperties {
+    return this._properties;
+  }
+  set properties(properties: Partial<EditorProperties>) {
+    this._properties = { ...this._properties, ...properties };
+    this.redraw();
+  }
 
   get render() {
     return this.editorPanel.render;
@@ -43,11 +72,11 @@ export abstract class EditorStateAndEvent extends Panel {
   set selectedTool(tool: Tool | undefined) {
     if (this._selectedTool == tool) return;
     this._selectedTool = tool;
-    this.onSelectedToolChange(tool);
+    this.sendMessage("onSelectedToolChange", tool);
   }
   set selectedShape(shape: Shape | undefined) {
     this._selectedShape = shape;
-    this.onSelectedShapeChange(shape);
+    this.sendMessage("onSelectedShapeChange", shape);
   }
   addShape(shape: Shape) {
     this._shapes.push(shape);
@@ -70,11 +99,11 @@ export abstract class EditorStateAndEvent extends Panel {
   }
 
   //events
-  protected onMouseDown(e: PointerEvent) {}
-  protected onMouseMove(e: PointerEvent) {}
-  protected onMouseUp(e: PointerEvent) {}
-  protected onMouseLeave(e: PointerEvent) {}
-  protected onMouseEnter(e: PointerEvent) {}
+  protected onMouseDown(e: EditorMouseEvent) {}
+  protected onMouseMove(e: EditorMouseEvent) {}
+  protected onMouseUp(e: EditorMouseEvent) {}
+  protected onMouseLeave(e: EditorMouseEvent) {}
+  protected onMouseEnter(e: EditorMouseEvent) {}
   protected onMouseWheel(e: WheelEvent) {}
   protected onClick(e: MouseEvent) {}
   //keyEvent
@@ -82,29 +111,23 @@ export abstract class EditorStateAndEvent extends Panel {
   protected onKeyUp(e: KeyboardEvent) {}
   protected onKeyPress(e: KeyboardEvent) {}
   //mouse drag event
-  protected onMouseDragStart(e: PointerEvent) {}
-  protected onMouseDrag(e: PointerEvent) {}
-  protected onMouseDragEnd(e: PointerEvent) {}
+  protected onMouseDragStart(e: EditorMouseEvent) {}
+  protected onMouseDrag(e: EditorMouseEvent) {}
+  protected onMouseDragEnd(e: EditorMouseEvent) {}
 
   //draw
   protected onPreDraw(render: Render) {}
   protected onDraw(render: Render) {}
   protected onPostDraw(render: Render) {}
   redraw() {
-    this.onPreDraw(this.render);
-    this.onDraw(this.render);
-    this.onPostDraw(this.render);
+    this.render.clear();
+    this.sendMessage("onPreDraw", this.render);
+    this.sendMessage("onDraw", this.render);
+    this.sendMessage("onPostDraw", this.render);
   }
   //callback
-  protected onSelectedShapeChange(shape?: Shape) {
-
-  }
-  protected onSelectedToolChange(tool?: Tool) {
-    //send to all plugins
-    this._plugins.forEach((plugin) => {
-      plugin.sendMessage("onSelectedToolChange", tool);
-    });
-  }
+  protected onSelectedShapeChange(shape?: Shape) {}
+  protected onSelectedToolChange(tool?: Tool) {}
   protected onInitProperty(shape: Shape) {}
   protected onMessage(type: BaseEventType, ...args: any) {
     switch (type) {
@@ -159,7 +182,84 @@ export abstract class EditorStateAndEvent extends Panel {
     }
   }
   sendMessage(type: BaseEventType, ...args: any) {
-    this.onMessage(type, args);
+    this.onMessage(type, ...args);
+    //send message to all plugins
+    this._plugins.forEach((plugin) => {
+      plugin.sendMessage(type, ...args);
+    });
+  }
+
+  // listeners for mouse to canvas
+  protected addMouseListeners() {
+    const canvas = this.editorPanel.canvas;
+    const makeEditorMouseEvent = (e: PointerEvent): EditorMouseEvent => {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        pe: e,
+      };
+    };
+    const makeEditorWheelEvent = (e: WheelEvent): EditorWheelEvent => {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        we: e,
+        direction: e.deltaY > 0 ? "down" : "up",
+      };
+    };
+    canvas.addEventListener("pointerdown", (e) => {
+      const mEvent = makeEditorMouseEvent(e);
+      this.sendMessage("onMouseDown", mEvent);
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      const mEvent = makeEditorMouseEvent(e);
+      this.sendMessage("onMouseMove", mEvent);
+      if (this.properties.isDragging) {
+        this.sendMessage("onMouseDrag", mEvent);
+      }
+    });
+    canvas.addEventListener("pointerup", (e) => {
+      const mEvent = makeEditorMouseEvent(e);
+      this.sendMessage("onMouseUp", mEvent);
+      if (this.properties.isDragging) {
+        this.properties.isDragging = false;
+        this.sendMessage("onMouseDragEnd", e);
+      }
+    });
+    canvas.addEventListener("pointerleave", (e) => {
+      const mEvent = makeEditorMouseEvent(e);
+      this.sendMessage("onMouseLeave", mEvent);
+    });
+    canvas.addEventListener("pointerenter", (e) => {
+      const mEvent = makeEditorMouseEvent(e);
+      this.sendMessage("onMouseEnter", mEvent);
+    });
+
+    //wheel
+    canvas.addEventListener("wheel", (e) => {
+      const mEvent = makeEditorWheelEvent(e);
+      this.sendMessage("onMouseWheel", mEvent);
+    });
+  }
+  protected addListeners() {
+    window.addEventListener("resize", () => {
+      this.redraw();
+    });
+    this.addMouseListeners();
+  }
+
+  //capture mouse
+  capturePointer(e: EditorMouseEvent) {
+    this.editorPanel.canvas.setPointerCapture(e.pe.pointerId);
+    if (!this.properties.isDragging) {
+      this.properties.isDragging = true;
+      this.sendMessage("onMouseDragStart", e);
+    }
+  }
+  releasePointer(e: EditorMouseEvent) {
+    this.editorPanel.canvas.releasePointerCapture(e.pe.pointerId);
   }
 }
 
@@ -168,6 +268,7 @@ export default class VectorEditor extends EditorStateAndEvent {
     super();
     this.createHTML();
     this.onStart();
+    this.addListeners();
   }
   onStart(): void {
     this.editorPanel.onStart();

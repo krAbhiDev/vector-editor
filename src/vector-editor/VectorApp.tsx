@@ -5,6 +5,7 @@ import { Circle, Shape } from "./core/Shape";
 import { setTimer } from "../others/utils";
 import { annotationTest } from "./annotation";
 import { RenderPlugin } from "./plugins/RenderPlugin";
+import { PanZoomPlugin } from "./plugins/PanZoomPlugin";
 function add(...nums: any) {
   //sum of all
   return nums[0] + nums[1];
@@ -27,7 +28,8 @@ export function _VectorApp() {
   useEffect(() => {
     editorRef.current = new VectorEditor(mainRef.current!);
     const editor = editorRef.current;
-    editor.addPlugin(new RenderPlugin(), "renderPlugin");
+    editor.addPlugin(new RenderPlugin(), "RenderPlugin");
+    editor.addPlugin(new PanZoomPlugin(), "PanZoomPlugin");
     //add random circle shape
     setTimer((t) => {
       const circle = new Circle();
@@ -39,7 +41,7 @@ export function _VectorApp() {
         Math.random() * 255
       })`;
       editor.addShape(circle);
-    }, 1000);
+    }, 2000);
   }, []);
 
   return (
