@@ -1,82 +1,51 @@
 import { useEffect, useRef } from "react";
-import VectorEditor, {
-  Circle,
-  Property,
-  PropertyPanel,
-  Shape,
-} from "./VectorEditor";
+import VectorEditor from "./core/VectorEditor";
+import { PropertyPanel } from "./core/panels/PropertyPanel";
+import { Circle, Shape } from "./core/Shape";
 import { setTimer } from "../others/utils";
 import { annotationTest } from "./annotation";
-
+import { RenderPlugin } from "./plugins/RenderPlugin";
+function add(...nums: any) {
+  //sum of all
+  return nums[0] + nums[1];
+}
+function logMany(...args: any) {
+  const sum = add(args[0], args[1]);
+  console.log("sum", args, sum);
+}
 function Test() {
-  function shapeTest() {
-    const shape = new Shape();
-    const circle = new Circle();
-    const panel = new PropertyPanel();
-    panel.setSelectedShape(shape);
-
-    circle.color.addObserver((value) => {
-      console.log("circle color", value);
-    });
-    circle.x.addObserver((value) => {
-      console.log("circle x", value);
-    });
-    circle.isFill.addObserver((value) => {
-      console.log("circle isFill", value);
-    });
-
-    setTimer(
-      (times: number) => {
-        shape.x.value = times * 10;
-      },
-      1000,
-      0,
-      3,
-      () => {
-        panel.setSelectedShape(circle);
-        setTimer(
-          (times: number) => {
-            circle.radius.value = times * 10;
-          },
-          1000,
-          0,
-          3
-        );
-      }
-    );
-  }
-  function arrayTest() {
-    const colors = new Property<string[]>([], "color", "colors");
-    colors.addObserver((value) => {
-      console.log("colors", value);
-    });
-    setTimer((t) => {
-      if (t > 5) {
-        colors.value.pop();
-      } else {
-        colors.value.push("red" + t);
-      }
-    }, 1000);
-  }
-
-
   useEffect(() => {
     // arrayTest();
-    annotationTest();
+    logMany(1, 3, "ol");
+    // annotationTest();
   }, []);
   return <div></div>;
 }
 export function _VectorApp() {
   const mainRef = useRef<HTMLDivElement | null>(null);
-  const editor = useRef<VectorEditor>();
+  const editorRef = useRef<VectorEditor>();
   useEffect(() => {
-    editor.current = new VectorEditor(mainRef.current!);
+    editorRef.current = new VectorEditor(mainRef.current!);
+    const editor = editorRef.current;
+    editor.addPlugin(new RenderPlugin(), "renderPlugin");
+    //add random circle shape
+    setTimer((t) => {
+      const circle = new Circle();
+      circle.x.value = Math.random() * 500;
+      circle.y.value = Math.random() * 300;
+      circle.radius.value = Math.random() * 100;
+
+      circle.color.value = `rgb(${Math.random() * 255},${Math.random() * 255},${
+        Math.random() * 255
+      })`;
+      editor.addShape(circle);
+    }, 1000);
   }, []);
 
   return (
     <div
       ref={mainRef}
-      className="w-full fixed h-full p-5 flex justify-center self-center"
+      className=" w-full fixed h-full p-5 flex justify-center self-center"
     ></div>
   );
   return (
@@ -103,7 +72,8 @@ export function _VectorApp() {
 export default function VectorApp() {
   return (
     <>
-      <Test />
+      {/* <Test /> */}
+      <_VectorApp />
     </>
   );
 }

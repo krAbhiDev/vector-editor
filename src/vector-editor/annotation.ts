@@ -45,7 +45,7 @@ export class Observer<T> {
     console.log("unsubscribe", subscriber, "length", this._subscribers.length);
   }
 }
-class ArrayObserver<T> extends Observer<T[]> {
+export class ArrayObserver<T> extends Observer<T[]> {
   constructor(value: T[]) {
     super(value);
   }
@@ -139,4 +139,66 @@ export function annotationTest() {
  *  - get all the field  of class  with annotation @Property
  * @Property
  * - get name , type ,value
+ */
+
+
+/**
+
+  protected onMessage(type: BaseEventType, ...args: any) {
+    switch (type) {
+      case "onMouseDown":
+        this.onMouseDown(args[0]);
+        break;
+      case "onMouseMove":
+        this.onMouseMove(args[0]);
+        break;
+      case "onMouseUp":
+        this.onMouseUp(args[0]);
+        break;
+      case "onMouseLeave":
+        this.onMouseLeave(args[0]);
+        break;
+      case "onMouseEnter":
+        this.onMouseEnter(args[0]);
+        break;
+      case "onMouseWheel":
+        this.onMouseWheel(args[0]);
+        break;
+      case "onClick":
+        this.onClick(args[0]);
+        break;
+      case "onKeyDown":
+        this.onKeyDown(args[0]);
+        break;
+      case "onKeyUp":
+        this.onKeyUp(args[0]);
+        break;
+      case "onKeyPress":
+        this.onKeyPress(args[0]);
+        break;
+      case "onMouseDragStart":
+        this.onMouseDragStart(args[0]);
+        break;
+      case "onMouseDrag":
+        this.onMouseDrag(args[0]);
+        break;
+      case "onMouseDragEnd":
+        this.onMouseDragEnd(args[0]);
+        break;
+      case "onSelectedShapeChange":
+        this.onSelectedShapeChange(args[0]);
+        break;
+      case "onSelectedToolChange":
+        this.onSelectedToolChange(args[0]);
+        break;
+      case "onInitProperty":
+        this.onInitProperty(args[0]);
+        break;
+    }
+  }
+  sendMessage(type: BaseEventType, ...args: any) {
+    this.onMessage(type, args);
+  }
+
+
  */
