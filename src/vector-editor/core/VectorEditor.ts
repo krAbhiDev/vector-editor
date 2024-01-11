@@ -36,7 +36,7 @@ export abstract class EditorStateAndEvent extends Panel {
     backgroundColor: Color.fromHex("#eeaaee"),
     zoom: 1,
     maxZoom: 8,
-    minZoom: 0.1,
+    minZoom: 0.001,
     grid: false,
     gridColor: Color.fromHex("#000000"),
     isDragging: false,
@@ -242,6 +242,13 @@ export abstract class EditorStateAndEvent extends Panel {
       const mEvent = makeEditorWheelEvent(e);
       this.sendMessage("onMouseWheel", mEvent);
     });
+
+    //disable contextmenu
+    canvas.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    })
+    
+    
   }
   protected addListeners() {
     window.addEventListener("resize", () => {
@@ -319,19 +326,5 @@ export default class VectorEditor extends EditorStateAndEvent {
   }
 
   //draw
-  protected override onPreDraw(render: Render) {
-    this._plugins.forEach((plugin) => {
-      plugin.sendMessage("onPreDraw", render);
-    });
-  }
-  protected override onDraw(render: Render) {
-    this._plugins.forEach((plugin) => {
-      plugin.sendMessage("onDraw", render);
-    });
-  }
-  protected override onPostDraw(render: Render) {
-    this._plugins.forEach((plugin) => {
-      plugin.sendMessage("onPostDraw", render);
-    });
-  }
+  
 }

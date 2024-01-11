@@ -22,6 +22,8 @@ export class PanZoomPlugin extends Plugin {
     this.releasePointer(e);
   }
   protected onMouseDrag(e: EditorMouseEvent): void {
+    //if mouse middle button clicked
+    console.log("button",e.pe.buttons)
     const mv = new Point(e.x, e.y);
     this.offset.x = mv.x - this.startDragPoint.x;
     this.offset.y = mv.y - this.startDragPoint.y;
