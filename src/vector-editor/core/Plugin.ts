@@ -102,12 +102,6 @@ export class Plugin {
       case "onMouseDragEnd":
         this.onMouseDragEnd(args[0]);
         break;
-      case "onSelectedShapeChange":
-        this.onSelectedShapeChange(args[0]);
-        break;
-      case "onSelectedToolChange":
-        this.onSelectedToolChange(args[0]);
-        break;
     }
   }
 
