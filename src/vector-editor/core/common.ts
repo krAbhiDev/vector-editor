@@ -1,5 +1,6 @@
 import { Color } from "../../others/Color";
 import Point from "../../others/Point";
+import { Plugin } from "./Plugin";
 
 export type BaseEventType =
   | "onMouseDown"
@@ -75,3 +76,4 @@ export interface EditorProperties {
   isDragging: boolean;
   panOffset: Point;
 }
+

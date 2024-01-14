@@ -98,6 +98,28 @@ export abstract class EditorStateAndEvent extends Panel {
     this.toolPanel.removeTool(tool);
   }
 
+  //plugins
+  addPlugin(plugin: Plugin, name: string) {
+    plugin.name = name;
+    if (this._plugins.has(name)) {
+      console.error(`Plugin with name: ${name} already exists`);
+      return;
+    }
+    this._plugins.set(name, plugin);
+    plugin.sendMessage("onActivate", this);
+    console.log(`Plugin with name: ${name} added`);
+  }
+  removePlugin(name: string) {
+    const plugin = this._plugins.get(name);
+    if (plugin) {
+      plugin.sendMessage("onDeActivate");
+      this._plugins.delete(name);
+      console.log(`Plugin with name: ${name} removed`);
+    } else {
+      console.error(`Plugin with name: ${name} does not exist`);
+    }
+  }
+
   //events
   protected onMouseDown(e: EditorMouseEvent) {}
   protected onMouseMove(e: EditorMouseEvent) {}
@@ -246,9 +268,7 @@ export abstract class EditorStateAndEvent extends Panel {
     //disable contextmenu
     canvas.addEventListener("contextmenu", (e) => {
       e.preventDefault();
-    })
-    
-    
+    });
   }
   protected addListeners() {
     window.addEventListener("resize", () => {
@@ -302,29 +322,4 @@ export default class VectorEditor extends EditorStateAndEvent {
     //main
     this.main.appendChild(this.htmlDiv);
   }
-  //add shape
-
-  addTool(tool: Tool) {}
-  addPlugin(plugin: Plugin, name: string) {
-    if (this._plugins.has(name)) {
-      console.error(`Plugin with name: ${name} already exists`);
-      return;
-    }
-    this._plugins.set(name, plugin);
-    plugin.sendMessage("onActivate", this);
-    console.log(`Plugin with name: ${name} added`);
-  }
-  removePlugin(name: string) {
-    const plugin = this._plugins.get(name);
-    if (plugin) {
-      plugin.sendMessage("onDeActivate");
-      this._plugins.delete(name);
-      console.log(`Plugin with name: ${name} removed`);
-    } else {
-      console.error(`Plugin with name: ${name} does not exist`);
-    }
-  }
-
-  //draw
-  
 }

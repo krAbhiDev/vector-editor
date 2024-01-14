@@ -13,10 +13,6 @@ export class ToolPanel extends Panel {
     htmlDiv.className =
       "h-[40px] bg-gray-50 shadow-md z-50 absolute top-3 left-1/2 -translate-x-1/2 flex flex-row cursor-default min-w-[100px]  flex ";
     this.htmlDiv = htmlDiv;
-    this.addTool({ name: "Select" });
-    this.addTool({ name: "Pen" });
-    const line: Tool = { name: "Line" };
-    this.addTool(line);
   }
   addTool(tool: Tool) {
     const toolDiv = document.createElement("div");

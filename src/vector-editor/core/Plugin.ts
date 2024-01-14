@@ -13,6 +13,7 @@ import {
 export type PluginEventType = BaseEventType | "onActivate" | "onDeActivate";
 
 export class Plugin {
+  name: string = "Plugin";
   private _editor?: VectorEditor;
   get editor() {
     if (!this._editor) throw new Error("Editor is not activated");
@@ -132,4 +133,29 @@ export class Plugin {
   protected onMouseDragStart(e: EditorMouseEvent) {}
   protected onMouseDrag(e: EditorMouseEvent) {}
   protected onMouseDragEnd(e: EditorMouseEvent) {}
+}
+
+export class ToolPlugin extends Plugin {
+  protected _tool?: Tool;
+  get tool() {
+    if (!this._tool) throw new Error("Tool is null");
+    return this._tool;
+  }
+  protected registerTool(tool: Tool) {
+    this._tool = tool;
+    this.editor.addTool(tool);
+  }
+
+  sendMessage(type: PluginEventType, ...args: any): void {
+    if (type == "onActivate" || type == "onDeActivate") {
+      super.sendMessage(type, ...args);
+      return;
+    }
+    if (this.editor.selectedTool && this.editor.selectedTool == this.tool)
+      super.sendMessage(type, ...args);
+    // else
+    //   console.warn(
+    //     `Plugin ${this.name} is not selected tool, so it cannot send message`
+    //   );
+  }
 }
