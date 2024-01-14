@@ -14,6 +14,10 @@ export type PluginEventType = BaseEventType | "onActivate" | "onDeActivate";
 
 export class Plugin {
   name: string = "Plugin";
+  private _key: string = "";
+  get key() {
+    return this._key;
+  }
   private _editor?: VectorEditor;
   get editor() {
     if (!this._editor) throw new Error("Editor is not activated");
@@ -86,9 +90,11 @@ export class Plugin {
         this.onMouseWheel(args[0]);
         break;
       case "onKeyDown":
+        this._key = (args[0] as EditorKeyEvent).ke.key;
         this.onKeyDown(args[0]);
         break;
       case "onKeyUp":
+        this._key = "";
         this.onKeyUp(args[0]);
         break;
       case "onKeyPress":

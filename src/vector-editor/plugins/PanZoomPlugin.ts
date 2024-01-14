@@ -1,16 +1,21 @@
 import Point from "../../others/Point";
 import { Render } from "../../others/Render";
 import { Plugin } from "../core/Plugin";
-import { EditorMouseEvent, EditorWheelEvent } from "../core/common";
+import {
+  EditorKeyEvent,
+  EditorMouseEvent,
+  EditorWheelEvent,
+} from "../core/common";
 
 export class PanZoomPlugin extends Plugin {
   /**
-   * - pan with middle button => middle down and  mouse move
+   * - pan with middle button or space key pressed => middle down and  mouse move
    * - zoom with mouse wheel => ctrl + mouse wheel
    * - vertical scroll => wheel
    * - horizontal scroll => shift + wheel
    */
   private startDragPoint = new Point();
+  private isPan = false;
   get offset() {
     return this.properties.panOffset;
   }
@@ -23,19 +28,28 @@ export class PanZoomPlugin extends Plugin {
   }
   protected onMouseDrag(e: EditorMouseEvent): void {
     //if mouse middle button clicked
-    console.log("button",e.pe.buttons)
+    if (!this.isPan) return;
     const mv = new Point(e.x, e.y);
     this.offset.x = mv.x - this.startDragPoint.x;
     this.offset.y = mv.y - this.startDragPoint.y;
     this.redraw();
   }
+  protected onMouseDragEnd(e: EditorMouseEvent): void {
+    this.isPan = false;
+  }
   protected onMouseDragStart(e: EditorMouseEvent): void {
+    //if mouse middle button clicked
+    if (!(e.pe.buttons == 4 || this.key == " ")) return;
+    this.isPan = true;
     const dp = new Point(e.x, e.y);
     this.startDragPoint.x = dp.x - this.offset.x;
     this.startDragPoint.y = dp.y - this.offset.y;
     this.redraw();
   }
   protected onMouseWheel(e: EditorWheelEvent): void {
+    //only if ctrl key is pressed
+    if (!e.we.ctrlKey) return;
+    e.we.preventDefault();
     const point = new Point(e.x, e.y);
     const zoomFactor = e.we.deltaY > 0 ? 0.9 : 1.1;
     const newZoom = this.properties.zoom * zoomFactor;

@@ -10,6 +10,7 @@ import { EditorPanel } from "./panels/EditorPanel";
 import { ToolPanel } from "./panels/ToolPanel";
 import {
   BaseEventType,
+  EditorKeyEvent,
   EditorMouseEvent,
   EditorProperties,
   EditorWheelEvent,
@@ -129,9 +130,9 @@ export abstract class EditorStateAndEvent extends Panel {
   protected onMouseWheel(e: WheelEvent) {}
   protected onClick(e: MouseEvent) {}
   //keyEvent
-  protected onKeyDown(e: KeyboardEvent) {}
-  protected onKeyUp(e: KeyboardEvent) {}
-  protected onKeyPress(e: KeyboardEvent) {}
+  protected onKeyDown(e: EditorKeyEvent) {}
+  protected onKeyUp(e: EditorKeyEvent) {}
+  protected onKeyPress(e: EditorKeyEvent) {}
   //mouse drag event
   protected onMouseDragStart(e: EditorMouseEvent) {}
   protected onMouseDrag(e: EditorMouseEvent) {}
@@ -270,11 +271,31 @@ export abstract class EditorStateAndEvent extends Panel {
       e.preventDefault();
     });
   }
+  protected addKeyListeners() {
+    const makeEditorKeyEvent = (e: KeyboardEvent): EditorKeyEvent => {
+      return {
+        ke: e,
+      };
+    };
+    window.addEventListener("keydown", (e) => {
+      const mEvent = makeEditorKeyEvent(e);
+      this.sendMessage("onKeyDown", mEvent);
+    });
+    window.addEventListener("keyup", (e) => {
+      const mEvent = makeEditorKeyEvent(e);
+      this.sendMessage("onKeyUp", mEvent);
+    });
+    window.addEventListener("keypress", (e) => {
+      const mEvent = makeEditorKeyEvent(e);
+      this.sendMessage("onKeyPress", mEvent);
+    });
+  }
   protected addListeners() {
     window.addEventListener("resize", () => {
       this.redraw();
     });
     this.addMouseListeners();
+    this.addKeyListeners();
   }
 
   //capture mouse

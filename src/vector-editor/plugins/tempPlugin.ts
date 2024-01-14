@@ -13,6 +13,7 @@ export class SelectAndTransformPlugin extends ToolPlugin {
   protected onMouseMove(e: EditorMouseEvent): void {
     console.log(this.name,"onMouseMove", e);
   }
+  
 }
 
 export class RectPlugin extends ToolPlugin {
