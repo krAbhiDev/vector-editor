@@ -1,6 +1,6 @@
 import Point from "../../others/Point";
 import { Render } from "../../others/Render";
-import { Circle, Shape } from "./Shape";
+import { CircleShape, Shape } from "./Shape";
 import { Tool } from "./Tool";
 import VectorEditor from "./VectorEditor";
 import {
@@ -23,6 +23,9 @@ export class Plugin {
     if (!this._editor) throw new Error("Editor is not activated");
     return this._editor;
   }
+  get shapes() {
+    return this.editor.shapes;
+  }
 
   sendMessage(type: PluginEventType, ...args: any) {
     this.onMessage(type, ...args);
@@ -43,6 +46,7 @@ export class Plugin {
   set properties(properties: Partial<EditorProperties>) {
     this.editor.properties = properties;
   }
+
 
   //callbacks
   protected onMessage(type: PluginEventType, ...args: any) {

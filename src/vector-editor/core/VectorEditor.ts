@@ -1,6 +1,6 @@
 import { Render } from "../../others/Render";
 import { setTimer } from "../../others/utils";
-import { Circle, Shape } from "./Shape";
+import { CircleShape, Shape } from "./Shape";
 import { Observer } from "./Observer";
 import { Plugin } from "./Plugin";
 import { Tool } from "./Tool";
@@ -76,6 +76,7 @@ export abstract class EditorStateAndEvent extends Panel {
     this.sendMessage("onSelectedToolChange", tool);
   }
   set selectedShape(shape: Shape | undefined) {
+    if (this._selectedShape == shape) return;
     this._selectedShape = shape;
     this.sendMessage("onSelectedShapeChange", shape);
   }
@@ -308,6 +309,22 @@ export abstract class EditorStateAndEvent extends Panel {
   }
   releasePointer(e: EditorMouseEvent) {
     this.editorPanel.canvas.releasePointerCapture(e.pe.pointerId);
+  }
+
+  //conversion utils for point
+  screenToWorld(screen: Point) {
+    const offset = this.properties.panOffset;
+    const currentZoom = this.properties.zoom;
+    const worldX = (screen.x - offset.x) / currentZoom;
+    const worldY = (screen.y - offset.y) / currentZoom;
+    return new Point(worldX, worldY);
+  }
+  worldToScreen(world: Point) {
+    const offset = this.properties.panOffset;
+    const currentZoom = this.properties.zoom;
+    const screenX = world.x * currentZoom + offset.x;
+    const screenY = world.y * currentZoom + offset.y;
+    return new Point(screenX, screenY);
   }
 }
 

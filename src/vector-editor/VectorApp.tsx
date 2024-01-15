@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import VectorEditor from "./core/VectorEditor";
 import { PropertyPanel } from "./core/panels/PropertyPanel";
-import { Circle, Shape } from "./core/Shape";
+import { CircleShape, Shape } from "./core/Shape";
 import { setTimer } from "../others/utils";
 import { annotationTest } from "./annotation";
 import { RenderPlugin } from "./plugins/RenderPlugin";
@@ -32,17 +32,16 @@ export function _VectorApp() {
     editor.addPlugin(new RenderPlugin(), "RenderPlugin");
     editor.addPlugin(new PanZoomPlugin(), "PanZoomPlugin");
     plugins.forEach(({ plugin: P, name }) => {
-      
       editor.addPlugin(new P(), name);
     });
     //add random circle shape
     setTimer((t) => {
-      const circle = new Circle();
-      circle.x.value = Math.random() * 500;
-      circle.y.value = Math.random() * 300;
-      circle.radius.value = Math.random() * 100;
+      const circle = new CircleShape();
+      circle.x = Math.random() * 500;
+      circle.y = Math.random() * 300;
+      circle.radius = Math.random() * 100;
 
-      circle.color.value = `rgb(${Math.random() * 255},${Math.random() * 255},${
+      circle.color = `rgb(${Math.random() * 255},${Math.random() * 255},${
         Math.random() * 255
       })`;
       editor.addShape(circle);
