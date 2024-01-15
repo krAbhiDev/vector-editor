@@ -58,7 +58,7 @@ export class SelectAndTransformPlugin extends ToolPlugin {
     }
   }
 
-  protected onDraw(render: Render): void {
+  protected onPostDraw(render: Render): void {
     if (
       this.hoverShape != this.editor.selectedShape &&
       this.hoverShape &&

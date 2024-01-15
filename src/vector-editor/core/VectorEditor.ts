@@ -14,12 +14,19 @@ import {
   EditorMouseEvent,
   EditorProperties,
   EditorWheelEvent,
+  PluginInfo,
 } from "./common";
 import { Color } from "../../others/Color";
 import Point from "../../others/Point";
-
+//remove plugin from PluginInfo
+type EditorPluginInfo = {
+  plugin: Plugin;
+  name: string;
+  order: number;
+};
 export abstract class EditorStateAndEvent extends Panel {
-  protected _plugins: Map<string, Plugin> = new Map();
+  protected _pluginsInfo = Array<EditorPluginInfo>();
+
   protected _shapes: Shape[] = [];
   protected _tools: Tool[] = [];
   protected _selectedTool?: Tool = undefined;
@@ -101,22 +108,46 @@ export abstract class EditorStateAndEvent extends Panel {
   }
 
   //plugins
-  addPlugin(plugin: Plugin, name: string) {
-    plugin.name = name;
-    if (this._plugins.has(name)) {
-      console.error(`Plugin with name: ${name} already exists`);
+  addPlugin(pluginInfo: PluginInfo) {
+    // if (this._plugins.has(name)) {
+    //   console.error(`Plugin with name: ${name} already exists`);
+    //   return;
+    // }
+    // this._plugins.set(name, plugin);
+    // plugin.sendMessage("onActivate", this);
+    // console.log(`Plugin with name: ${name} added`);
+    //check if plugin with same name exist or not
+
+    const plugin = this._pluginsInfo.find((p) => p.name == pluginInfo.name);
+    if (plugin) {
+      console.error(`Plugin with name: ${pluginInfo.name} already exists`);
       return;
     }
-    this._plugins.set(name, plugin);
-    plugin.sendMessage("onActivate", this);
-    console.log(`Plugin with name: ${name} added`);
+    const editorPluginInfo: EditorPluginInfo = {
+      plugin: new pluginInfo.pluginType(),
+      name: pluginInfo.name,
+      order: pluginInfo.order || 0,
+    };
+    editorPluginInfo.plugin.name = pluginInfo.name;
+    this._pluginsInfo.push(editorPluginInfo);
+    //sort plugins by order
+    this.sortPlugins();
+    //activate plugin
+    editorPluginInfo.plugin.sendMessage("onActivate", this);
+  }
+  private sortPlugins() {
+    this._pluginsInfo.sort(({ order: o1 = 0 }, { order: o2 = 0 }) => {
+      return o1 - o2;
+    });
   }
   removePlugin(name: string) {
-    const plugin = this._plugins.get(name);
+    const plugin = this._pluginsInfo.find((p) => p.name == name);
     if (plugin) {
-      plugin.sendMessage("onDeActivate");
-      this._plugins.delete(name);
-      console.log(`Plugin with name: ${name} removed`);
+      plugin.plugin.sendMessage("onDeActivate");
+      const index = this._pluginsInfo.indexOf(plugin);
+      if (index !== -1) {
+        this._pluginsInfo.splice(index, 1);
+      }
     } else {
       console.error(`Plugin with name: ${name} does not exist`);
     }
@@ -208,8 +239,8 @@ export abstract class EditorStateAndEvent extends Panel {
   sendMessage(type: BaseEventType, ...args: any) {
     this.onMessage(type, ...args);
     //send message to all plugins
-    this._plugins.forEach((plugin) => {
-      plugin.sendMessage(type, ...args);
+    this._pluginsInfo.forEach((info) => {
+      info.plugin.sendMessage(type, ...args);
     });
   }
 

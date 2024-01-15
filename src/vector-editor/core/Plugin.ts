@@ -47,7 +47,6 @@ export class Plugin {
     this.editor.properties = properties;
   }
 
-
   //callbacks
   protected onMessage(type: PluginEventType, ...args: any) {
     switch (type) {
@@ -66,6 +65,7 @@ export class Plugin {
         this.onPreDraw(args[0]);
         break;
       case "onPostDraw":
+        console.log(type, this.name);
         this.onPostDraw(args[0]);
         break;
       case "onSelectedShapeChange":

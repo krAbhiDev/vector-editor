@@ -29,12 +29,24 @@ export function _VectorApp() {
   useEffect(() => {
     editorRef.current = new VectorEditor(mainRef.current!);
     const editor = editorRef.current;
-    editor.addPlugin(new RenderPlugin(), "RenderPlugin");
-    editor.addPlugin(new PanZoomPlugin(), "PanZoomPlugin");
-    plugins.forEach(({ plugin: P, name }) => {
-      editor.addPlugin(new P(), name);
+    editor.addPlugin({
+      name: "RenderPlugin",
+      pluginType: RenderPlugin,
+      order: 998,
     });
-    //add random circle shape
+    editor.addPlugin({
+      name: "PanZoomPlugin",
+      pluginType: PanZoomPlugin,
+      order: 999,
+    });
+    plugins.forEach(({ pluginType: P, name, order }) => {
+      editor.addPlugin({
+        name,
+        pluginType: P,
+        order,
+      });
+    });
+    // add random circle shape
     setTimer((t) => {
       const circle = new CircleShape();
       circle.x = Math.random() * 500;

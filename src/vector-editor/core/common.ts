@@ -77,3 +77,5 @@ export interface EditorProperties {
   panOffset: Point;
 }
 
+export type PluginInfo = { pluginType: typeof Plugin; name: string,order?:number };
+
