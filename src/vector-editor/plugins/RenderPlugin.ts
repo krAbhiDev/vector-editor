@@ -1,16 +1,22 @@
 import Point from "../../others/Point";
 import { Render } from "../../others/Render";
 import { Plugin } from "../core/Plugin";
-import { CircleShape } from "../core/Shape";
+import { CircleShape, RectShape } from "../core/Shape";
 import { Tool } from "../core/Tool";
 
 export class RenderPlugin extends Plugin {
   protected override onDraw(render: Render) {
     this.editor.shapes.forEach((shape) => {
       if (shape instanceof CircleShape) {
-        render.drawCircle(
+        render.drawCircle(new Point(shape.x, shape.y), shape.radius, {
+          fillColor: shape.color,
+          mode: shape.isFill ? "fill" : "stroke",
+        });
+      } else if (shape instanceof RectShape) {
+        render.drawRect(
           new Point(shape.x, shape.y),
-          shape.radius,
+          shape.width,
+          shape.height,
           {
             fillColor: shape.color,
             mode: shape.isFill ? "fill" : "stroke",

@@ -65,7 +65,7 @@ export class Plugin {
         this.onPreDraw(args[0]);
         break;
       case "onPostDraw":
-        console.log(type, this.name);
+        // console.log(type, this.name);
         this.onPostDraw(args[0]);
         break;
       case "onSelectedShapeChange":

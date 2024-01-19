@@ -59,6 +59,7 @@ export class SelectAndTransformPlugin extends ToolPlugin {
   }
 
   protected onPostDraw(render: Render): void {
+    const lineDash=[3,5]
     if (
       this.hoverShape != this.editor.selectedShape &&
       this.hoverShape &&
@@ -69,6 +70,7 @@ export class SelectAndTransformPlugin extends ToolPlugin {
       render.drawRect(new Point(bound.x, bound.y), bound.width, bound.height, {
         mode: "stroke",
         strokeColor: "#000000",
+        lineDash
       });
     }
 
@@ -78,6 +80,7 @@ export class SelectAndTransformPlugin extends ToolPlugin {
       render.drawRect(new Point(bound.x, bound.y), bound.width, bound.height, {
         mode: "stroke",
         strokeColor: "#00ff00",
+        lineDash
       });
     }
   }

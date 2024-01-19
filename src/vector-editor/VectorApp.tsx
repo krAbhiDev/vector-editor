@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import VectorEditor from "./core/VectorEditor";
 import { PropertyPanel } from "./core/panels/PropertyPanel";
-import { CircleShape, Shape } from "./core/Shape";
+import { CircleShape, RectShape, Shape } from "./core/Shape";
 import { setTimer } from "../others/utils";
 import { annotationTest } from "./annotation";
 import { RenderPlugin } from "./plugins/RenderPlugin";
@@ -58,6 +58,19 @@ export function _VectorApp() {
       })`;
       editor.addShape(circle);
     }, 2000);
+
+    //add random rect
+    setTimer((t) => {
+      const rect = new RectShape();
+      rect.x = Math.random() * 500;
+      rect.y = Math.random() * 300;
+      rect.width = Math.random() * 100;
+      rect.height = Math.random() * 100;
+      rect.color = `rgb(${Math.random() * 255},${Math.random() * 255},${
+        Math.random() * 255
+      })`;
+      editor.addShape(rect);
+    }, 2500);
   }, []);
 
   return (

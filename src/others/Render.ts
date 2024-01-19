@@ -7,6 +7,8 @@ interface Style {
   strokeWidth?: number;
   mode?: "stroke" | "stroke_fill" | "fill";
   font?: string;
+  lineDash?: number[];
+
 }
 export class Render {
   constructor(public ctx: CanvasRenderingContext2D) {}
@@ -36,11 +38,16 @@ export class Render {
       strokeWidth = 1,
       mode = "fill",
       font = "18px Arial",
+      lineDash
     } = style;
+    this.ctx.save();
     this.ctx.fillStyle = fillColor;
     this.ctx.strokeStyle = strokeColor;
     this.ctx.lineWidth = strokeWidth;
     this.ctx.font = font;
+    if (lineDash) {
+      this.ctx.setLineDash(lineDash);
+    }
 
     switch (mode) {
       case "fill":
@@ -53,6 +60,7 @@ export class Render {
         this.ctx.fill();
         this.ctx.stroke();
     }
+    this.ctx.restore();
   }
   public drawTrianglesWithIndices(
     points: Point[],

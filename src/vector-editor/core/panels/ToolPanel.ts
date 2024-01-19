@@ -1,7 +1,8 @@
 import { setTimer } from "../../../others/utils";
 import { Panel } from "../Panel";
 import { Tool } from "../Tool";
-import VectorEditor, { EditorStateAndEvent } from "../VectorEditor";
+import VectorEditor from "../VectorEditor";
+import EditorStateAndEvent from "../EditorStateAndEvent";
 
 export class ToolPanel extends Panel {
   constructor(private editor: EditorStateAndEvent) {
