@@ -43,6 +43,7 @@ export default abstract class EditorStateAndEvent extends Panel {
     isDragging: false,
     panOffset: new Point(),
   };
+  protected _button=0;
   //private for utils
   private _downPoint = new Point();
   protected isMouseCaptured = false;
@@ -258,6 +259,7 @@ export default abstract class EditorStateAndEvent extends Panel {
     const canvas = this.editorPanel.canvas;
     const makeEditorMouseEvent = (e: PointerEvent): EditorMouseEvent => {
       const rect = canvas.getBoundingClientRect();
+
       return {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
@@ -266,6 +268,7 @@ export default abstract class EditorStateAndEvent extends Panel {
         wp: this.screenToWorld(
           new Point(e.clientX - rect.left, e.clientY - rect.top)
         ),
+        button: this._button,
       };
     };
     const makeEditorWheelEvent = (e: WheelEvent): EditorWheelEvent => {
@@ -278,6 +281,7 @@ export default abstract class EditorStateAndEvent extends Panel {
       };
     };
     canvas.addEventListener("pointerdown", (e) => {
+      this._button = e.buttons;
       const mEvent = makeEditorMouseEvent(e);
       this._downPoint = mEvent.sp.clone();
 

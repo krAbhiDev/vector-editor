@@ -47,38 +47,7 @@ export function _VectorApp() {
         order,
       });
     });
-    // add random circle shape
-    setTimer((t) => {
-      const circle = new CircleShape();
-      circle.x = Math.random() * 500;
-      circle.y = Math.random() * 300;
-      circle.radius = Math.random() * 100;
-
-      circle.color = Color.random().toString();
-      editor.addShape(circle);
-    }, 2000);
-
-    //add random rect
-    setTimer((t) => {
-      const rect = new RectShape();
-      rect.x = Math.random() * 500;
-      rect.y = Math.random() * 300;
-      rect.width = Math.random() * 100;
-      rect.height = Math.random() * 100;
-      rect.color = Color.random().toString();
-      editor.addShape(rect);
-    }, 2500);
   }, []);
-
-  //add timer to remove  shape if shape is more than 10 from bottom
-  setTimer((t) => {
-    const editor = editorRef.current!;
-    const shapes = editor.shapes;
-    const shapeCount = shapes.length;
-    if (shapeCount > 10) {
-      editor.removeShapeFromIndex(0);
-    }
-  }, 1000);
 
   return (
     <div

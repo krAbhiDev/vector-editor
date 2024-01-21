@@ -56,6 +56,7 @@ export interface EditorMouseEvent {
   sp:Point;
   wp:Point;
   pe: PointerEvent;
+  button: number;
 }
 export interface EditorWheelEvent {
   x: number;
