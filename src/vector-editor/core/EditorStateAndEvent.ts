@@ -43,7 +43,7 @@ export default abstract class EditorStateAndEvent extends Panel {
     isDragging: false,
     panOffset: new Point(),
   };
-  protected _button=0;
+  protected _button = 0;
   //private for utils
   private _downPoint = new Point();
   protected isMouseCaptured = false;
