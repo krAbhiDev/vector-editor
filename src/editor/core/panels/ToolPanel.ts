@@ -12,13 +12,13 @@ export class ToolPanel extends Panel {
   protected override createHTML() {
     const htmlDiv = document.createElement("div");
     htmlDiv.className =
-      "h-[40px] bg-gray-50 shadow-md z-50 absolute top-3 left-1/2 -translate-x-1/2 flex flex-row cursor-default min-w-[100px]  flex ";
+      "h-[40px] text-xs bg-gray-50 shadow-md z-50 absolute top-3 left-1/2 -translate-x-1/2 flex flex-row cursor-default  flex ";
     this.htmlDiv = htmlDiv;
   }
   addTool(tool: Tool) {
     const toolDiv = document.createElement("div");
     toolDiv.className =
-      "h-full hover:bg-red-100 p-1 flex items-center select-none";
+      "h-full hover:bg-red-100 p-1 flex items-center select-none  ";
     toolDiv.addEventListener("click", () => {
       this.editor.selectedTool = tool;
       this.editor.tools.forEach((_tool) => {

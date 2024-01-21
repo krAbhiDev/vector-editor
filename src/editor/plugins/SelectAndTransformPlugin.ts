@@ -42,7 +42,7 @@ export class SelectAndTransformPlugin extends ToolPlugin {
       !this.isUpdatingSelectedShape
     ) {
       //draw
-      const bound = this.hoverShape.getBounds();
+      const bound = this.hoverShape.getBound();
       render.drawRect(new Point(bound.x, bound.y), bound.width, bound.height, {
         mode: "stroke",
         strokeColor: "orange",
@@ -51,7 +51,7 @@ export class SelectAndTransformPlugin extends ToolPlugin {
     }
 
     if (this.editor.selectedShape) {
-      const bound = this.editor.selectedShape.getBounds();
+      const bound = this.editor.selectedShape.getBound();
       //draw
       render.drawRect(new Point(bound.x, bound.y), bound.width, bound.height, {
         mode: "stroke",

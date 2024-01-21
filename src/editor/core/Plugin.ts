@@ -1,6 +1,7 @@
 import Point from "../../others/Point";
 import { Render } from "../../others/Render";
 import { CircleShape, Shape } from "./Shape";
+import { ShapeHandle } from "./ShapeHandle";
 import { Tool } from "./Tool";
 import VectorEditor from "./VectorEditor";
 import {
@@ -71,7 +72,7 @@ export class Plugin {
       case "onActivate":
         this._editor = args[0];
         this.onActivate();
-        console.log(this.name,type);
+        console.log(this.name, type);
         break;
       case "onDeActivate":
         this.onDeActivate();
@@ -187,14 +188,13 @@ export class Plugin {
       this.messageHooks.splice(index, 1);
     }
   }
-  get isHandling(): boolean {
-    return false;
-  }
 }
 
 export class ToolPlugin extends Plugin {
   protected hoverShape?: Shape;
   protected _tool?: Tool;
+  handles: ShapeHandle[] = [];
+
   get tool() {
     if (!this._tool) throw new Error("Tool is null");
     return this._tool;
@@ -232,5 +232,13 @@ export class ToolPlugin extends Plugin {
       }
     }
     super.onMessage(type, ...args);
+  }
+
+  get isHandling(): boolean {
+    //loop all handle
+    for (const handle of this.handles) {
+      if (handle.isHandling) return true;
+    }
+    return false;
   }
 }

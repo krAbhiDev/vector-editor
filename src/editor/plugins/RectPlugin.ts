@@ -7,24 +7,11 @@ import { Tool } from "../core/Tool";
 import { EditorMouseEvent } from "../core/common";
 import { ShapeHandle } from "../core/ShapeHandle";
 export class RectPlugin extends ToolPlugin {
+  selectedShapeOffset = new Point();
   wdp = new Point();
   wOffset = new Point();
   color = Color.random(150);
   isDrawing = false;
-  handles: ShapeHandle[] = [];
-
-  get isHandling(): boolean {
-    //loop all handle
-    for (const handle of this.handles) {
-      if (handle.isHandling) return true;
-    }
-    return false;
-  }
-  protected drawHandles(render: Render) {
-    for (const handle of this.handles) {
-      handle.draw(render);
-    }
-  }
 
   protected onActivate(): void {
     //create tool
@@ -51,6 +38,13 @@ export class RectPlugin extends ToolPlugin {
           else shape.rect.bottom = shape.rect.top;
         }
       }),
+      //move from center
+      new ShapeHandle(this, new Point(0.5, 0.5), (e, shape) => {
+        if (shape instanceof RectShape) {
+          shape.x = e.wp.x - this.selectedShapeOffset.x;
+          shape.y = e.wp.y - this.selectedShapeOffset.y;
+        }
+      }),
     ];
   }
   protected onDeActivate(): void {
@@ -60,6 +54,12 @@ export class RectPlugin extends ToolPlugin {
   protected onMouseMove(e: EditorMouseEvent): void {}
   protected onMouseDown(e: EditorMouseEvent): void {
     this.wdp = e.wp.clone();
+    let selectedShape = this.editor.selectedShape;
+    if (selectedShape) {
+      this.selectedShapeOffset = e.wp
+        .clone()
+        .sub(new Point(selectedShape.x, selectedShape.y));
+    }
   }
   protected onMouseUp(e: EditorMouseEvent): void {
     if (!this.isHandling && e.button == 1) {
@@ -103,7 +103,7 @@ export class RectPlugin extends ToolPlugin {
       });
     if (this.editor.selectedShape) {
       //draw highlight
-      const bound = this.editor.selectedShape.getBounds();
+      const bound = this.editor.selectedShape.getBound();
       render.drawRect(new Point(bound.x, bound.y), bound.width, bound.height, {
         mode: "stroke",
         strokeColor: "#000000",
@@ -112,7 +112,6 @@ export class RectPlugin extends ToolPlugin {
     }
   }
   protected onSelectedShapeChange(shape?: Shape | undefined): void {
-    console.log(this.editor.shapes);
     if (shape instanceof RectShape) {
       this.onRectShapeSelected(shape);
     }

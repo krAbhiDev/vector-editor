@@ -2,7 +2,7 @@ import { Color } from "../../others/Color";
 import Point from "../../others/Point";
 import { Rect } from "../../others/Rect";
 import { Render } from "../../others/Render";
-import { Plugin } from "./Plugin";
+import { ToolPlugin } from "./Plugin";
 import { Shape } from "./Shape";
 import { EditorMouseEvent } from "./common";
 export type ShapeHandleLogicCallback = (
@@ -16,7 +16,7 @@ export class ShapeHandle {
   isHandling = false;
   private size = 10;
   constructor(
-    public plugin: Plugin,
+    public plugin: ToolPlugin,
     public anchor: Point = new Point(0, 0),
     public logicCallback?: ShapeHandleLogicCallback
   ) {
@@ -28,7 +28,6 @@ export class ShapeHandle {
             this.isHandling = true;
             this.plugin.redraw();
           }
-          console.log(e.pe.buttons, "buttons", this.isHandling);
           break;
         }
 
@@ -51,14 +50,14 @@ export class ShapeHandle {
           if (this.plugin.editor.selectedShape && this.isHandling) {
             logicCallback?.(e, this.plugin.editor.selectedShape);
             // this.resize(e);
-            this.updateRect();
+            this.update();
             plugin.redraw();
           }
           break;
         }
         case "onSelectedToolChange":
         case "onSelectedShapeChange":
-          this.updateRect();
+          this.update();
           break;
       }
     });
@@ -74,9 +73,15 @@ export class ShapeHandle {
       }
     }, "after");
   }
-  private updateRect() {
+  update() {
+    //for all plugin handle
+    for (const handle of this.plugin.handles) {
+      handle.updateRect();
+    }
+  }
+  updateRect() {
     if (this.plugin.editor.selectedShape) {
-      const bound = this.plugin.editor.selectedShape.getBounds();
+      const bound = this.plugin.editor.selectedShape.getBound();
       const x = this.anchor.x * bound.width + bound.x;
       const y = this.anchor.y * bound.height + bound.y;
       this.rect = Rect.fromCenter(new Point(x, y), this.size, this.size);

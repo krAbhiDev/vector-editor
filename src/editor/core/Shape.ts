@@ -9,7 +9,7 @@ export class Shape {
   isPointInside(x: number, y: number) {
     return false;
   }
-  getBounds() {
+  getBound() {
     return new Rect(this.x, this.y, 0, 0);
   }
   get x() {
@@ -31,7 +31,7 @@ export class CircleShape extends Shape {
   isPointInside(x: number, y: number): boolean {
     return Math.sqrt((x - this.x) ** 2 + (y - this.y) ** 2) <= this.radius;
   }
-  getBounds(): Rect {
+  getBound(): Rect {
     return new Rect(
       this.x - this.radius,
       this.y - this.radius,
@@ -50,8 +50,8 @@ export class RectShape extends Shape {
       y <= this.y + this.height
     );
   }
-  getBounds(): Rect {
-    return new Rect(this.x, this.y, this.width, this.height);
+  getBound(): Rect {
+    return this.rect.clone();
   }
   get width() {
     return this.rect.width;
@@ -81,7 +81,7 @@ export class RectShape extends Shape {
 export class LineShape extends Shape {
   x2 = 10;
   y2 = 10;
-  getBounds(): Rect {
+  getBound(): Rect {
     return new Rect(this.x, this.y, this.x2 - this.x, this.y2 - this.y);
   }
 }
