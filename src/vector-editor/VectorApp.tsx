@@ -7,6 +7,7 @@ import { annotationTest } from "./annotation";
 import { RenderPlugin } from "./plugins/RenderPlugin";
 import { PanZoomPlugin } from "./plugins/PanZoomPlugin";
 import plugins from "./plugins/tempPlugin";
+import { Color } from "../others/Color";
 function add(...nums: any) {
   //sum of all
   return nums[0] + nums[1];
@@ -53,9 +54,7 @@ export function _VectorApp() {
       circle.y = Math.random() * 300;
       circle.radius = Math.random() * 100;
 
-      circle.color = `rgb(${Math.random() * 255},${Math.random() * 255},${
-        Math.random() * 255
-      })`;
+      circle.color = Color.random().toString();
       editor.addShape(circle);
     }, 2000);
 
@@ -66,12 +65,20 @@ export function _VectorApp() {
       rect.y = Math.random() * 300;
       rect.width = Math.random() * 100;
       rect.height = Math.random() * 100;
-      rect.color = `rgb(${Math.random() * 255},${Math.random() * 255},${
-        Math.random() * 255
-      })`;
+      rect.color = Color.random().toString();
       editor.addShape(rect);
     }, 2500);
   }, []);
+
+  //add timer to remove  shape if shape is more than 10 from bottom
+  setTimer((t) => {
+    const editor = editorRef.current!;
+    const shapes = editor.shapes;
+    const shapeCount = shapes.length;
+    if (shapeCount > 10) {
+      editor.removeShapeFromIndex(0);
+    }
+  }, 1000);
 
   return (
     <div

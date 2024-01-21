@@ -10,6 +10,7 @@ export type EditorPluginInfo = {
   order: number;
 };
 export default class VectorEditor extends EditorStateAndEvent {
+ 
   constructor(private main: HTMLDivElement) {
     super();
     this.createHTML();

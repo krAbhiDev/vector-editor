@@ -1,8 +1,8 @@
 import { Rect } from "../../others/Rect";
 
 export class Shape {
-  x = 0;
-  y = 0;
+  protected _x = 0;
+  protected _y = 0;
   color = "#000000";
   isFill = true;
   strokeWidth = 1;
@@ -11,6 +11,18 @@ export class Shape {
   }
   getBounds() {
     return new Rect(this.x, this.y, 0, 0);
+  }
+  get x() {
+    return this._x;
+  }
+  get y() {
+    return this._y;
+  }
+  set x(val) {
+    this._x = val;
+  }
+  set y(val) {
+    this._y = val;
   }
 }
 
@@ -29,8 +41,7 @@ export class CircleShape extends Shape {
   }
 }
 export class RectShape extends Shape {
-  width = 10;
-  height = 10;
+  rect = new Rect();
   isPointInside(x: number, y: number): boolean {
     return (
       x >= this.x &&
@@ -41,6 +52,30 @@ export class RectShape extends Shape {
   }
   getBounds(): Rect {
     return new Rect(this.x, this.y, this.width, this.height);
+  }
+  get width() {
+    return this.rect.width;
+  }
+  get height() {
+    return this.rect.height;
+  }
+  set width(val) {
+    this.rect.width = val;
+  }
+  set height(val) {
+    this.rect.height = val;
+  }
+  get x(): number {
+    return this.rect.x;
+  }
+  get y(): number {
+    return this.rect.y;
+  }
+  set x(val: number) {
+    this.rect.x = val;
+  }
+  set y(val: number) {
+    this.rect.y = val;
   }
 }
 export class LineShape extends Shape {

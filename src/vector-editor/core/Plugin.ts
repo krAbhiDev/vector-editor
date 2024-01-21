@@ -9,12 +9,20 @@ import {
   EditorMouseEvent,
   EditorProperties,
   EditorWheelEvent,
+  MessageHookCallback,
+  PluginEventType,
 } from "./common";
-export type PluginEventType = BaseEventType | "onActivate" | "onDeActivate";
 
+type MessageHook = {
+  type?: "before" | "after";
+  callback: MessageHookCallback;
+};
 export class Plugin {
   name: string = "Plugin";
   private _key: string = "";
+  // private messageHooks: MessageHookCallback[] = [];
+  private messageHooks: MessageHook[] = [];
+
   get key() {
     return this._key;
   }
@@ -28,7 +36,17 @@ export class Plugin {
   }
 
   sendMessage(type: PluginEventType, ...args: any) {
+    for (const hook of this.messageHooks) {
+      if (hook.type == "before" || !hook.type) {
+        hook.callback(type, ...args);
+      }
+    }
     this.onMessage(type, ...args);
+    for (const hook of this.messageHooks) {
+      if (hook.type == "after") {
+        hook.callback(type, ...args);
+      }
+    }
   }
 
   redraw() {
@@ -53,7 +71,7 @@ export class Plugin {
       case "onActivate":
         console.log(type, args);
         this._editor = args[0];
-        this.onActivate(args[0]);
+        this.onActivate();
         break;
       case "onDeActivate":
         this.onDeActivate();
@@ -116,7 +134,7 @@ export class Plugin {
     }
   }
 
-  protected onActivate(editor: VectorEditor) {}
+  protected onActivate() {}
   protected onDeActivate() {}
 
   //draw
@@ -143,9 +161,39 @@ export class Plugin {
   protected onMouseDragStart(e: EditorMouseEvent) {}
   protected onMouseDrag(e: EditorMouseEvent) {}
   protected onMouseDragEnd(e: EditorMouseEvent) {}
+
+  //utils
+  protected findShapeAtPoint(wPoint: Point): Shape | undefined {
+    for (let i = this.shapes.length - 1; i >= 0; i--) {
+      const shape = this.shapes[i];
+      if (shape.isPointInside(wPoint.x, wPoint.y)) {
+        //shape is
+        return shape;
+      }
+    }
+    return undefined;
+  }
+
+  // messageHooks
+  addMessageHook(callback: MessageHookCallback, type?: "before" | "after") {
+    const hook: MessageHook = { callback, type };
+    this.messageHooks.push(hook);
+    return hook;
+  }
+
+  removeMessageHook(hook: MessageHook): void {
+    const index = this.messageHooks.indexOf(hook);
+    if (index !== -1) {
+      this.messageHooks.splice(index, 1);
+    }
+  }
+  get isHandling(): boolean {
+    return false;
+  }
 }
 
 export class ToolPlugin extends Plugin {
+  protected hoverShape?: Shape;
   protected _tool?: Tool;
   get tool() {
     if (!this._tool) throw new Error("Tool is null");
@@ -154,6 +202,10 @@ export class ToolPlugin extends Plugin {
   protected registerTool(tool: Tool) {
     this._tool = tool;
     this.editor.addTool(tool);
+  }
+  protected onDeActivate(): void {
+    if (this._tool) this.editor.removeTool(this._tool);
+    this._tool = undefined;
   }
 
   sendMessage(type: PluginEventType, ...args: any): void {
@@ -167,5 +219,18 @@ export class ToolPlugin extends Plugin {
     //   console.warn(
     //     `Plugin ${this.name} is not selected tool, so it cannot send message`
     //   );
+  }
+  //shape callback
+  protected onHoverShapeChange(shape?: Shape) {}
+
+  protected onMessage(type: PluginEventType, ...args: any): void {
+    if (type == "onMouseMove") {
+      let hoverShape = this.findShapeAtPoint(args[0].wp);
+      if (hoverShape != this.hoverShape) {
+        this.hoverShape = hoverShape;
+        this.onHoverShapeChange(hoverShape);
+      }
+    }
+    super.onMessage(type, ...args);
   }
 }

@@ -56,3 +56,7 @@ export function randomValue<T>(values: T[]) {
   return values[Math.floor(Math.random() * values.length)];
 }
 
+export function toInt(value: number | string) {
+  return parseInt(value.toString());
+}
+

@@ -21,6 +21,8 @@ export type BaseEventType =
   | "onPreDraw"
   | "onDraw"
   | "onPostDraw"
+  | "onActive"
+  | "onDeActive"
   | "onInitProperty";
 
 abstract class BaseEvent {
@@ -51,6 +53,8 @@ abstract class BaseEvent {
 export interface EditorMouseEvent {
   x: number;
   y: number;
+  sp:Point;
+  wp:Point;
   pe: PointerEvent;
 }
 export interface EditorWheelEvent {
@@ -79,3 +83,5 @@ export interface EditorProperties {
 
 export type PluginInfo = { pluginType: typeof Plugin; name: string,order?:number };
 
+export type MessageHookCallback = (type: PluginEventType, ...args: any[]) => void;
+export type PluginEventType = BaseEventType | "onActivate" | "onDeActivate";

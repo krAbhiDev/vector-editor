@@ -11,13 +11,13 @@ import {
   EditorMouseEvent,
   EditorProperties,
   EditorWheelEvent,
-  PluginInfo
+  PluginInfo,
 } from "./common";
 import { Color } from "../../others/Color";
 import Point from "../../others/Point";
 import { EditorPluginInfo } from "./VectorEditor";
 
- export default abstract class EditorStateAndEvent extends Panel {
+export default abstract class EditorStateAndEvent extends Panel {
   protected _pluginsInfo = Array<EditorPluginInfo>();
 
   protected _shapes: Shape[] = [];
@@ -43,6 +43,9 @@ import { EditorPluginInfo } from "./VectorEditor";
     isDragging: false,
     panOffset: new Point(),
   };
+  //private for utils
+  private _downPoint = new Point();
+  protected isMouseCaptured = false;
   get properties(): EditorProperties {
     return this._properties;
   }
@@ -88,8 +91,22 @@ import { EditorPluginInfo } from "./VectorEditor";
     const index = this._shapes.indexOf(shape);
     if (index !== -1) {
       this._shapes.splice(index, 1);
+      if (this.selectedShape == shape) {
+        this.sendMessage("onSelectedShapeChange", undefined);
+        this.selectedShape = undefined;
+      }
       this.redraw();
     }
+  }
+  removeShapeFromIndex(index: number) {
+    if (index < 0 || index >= this._shapes.length) return;
+    const shape = this._shapes[index];
+    this._shapes.splice(index, 1);
+    if (this.selectedShape == shape) {
+      this.sendMessage("onSelectedShapeChange", undefined);
+      this.selectedShape = undefined;
+    }
+    this.redraw();
   }
   //tool
   addTool(tool: Tool) {
@@ -146,26 +163,26 @@ import { EditorPluginInfo } from "./VectorEditor";
   }
 
   //events
-  protected onMouseDown(e: EditorMouseEvent) { }
-  protected onMouseMove(e: EditorMouseEvent) { }
-  protected onMouseUp(e: EditorMouseEvent) { }
-  protected onMouseLeave(e: EditorMouseEvent) { }
-  protected onMouseEnter(e: EditorMouseEvent) { }
-  protected onMouseWheel(e: WheelEvent) { }
-  protected onClick(e: MouseEvent) { }
+  protected onMouseDown(e: EditorMouseEvent) {}
+  protected onMouseMove(e: EditorMouseEvent) {}
+  protected onMouseUp(e: EditorMouseEvent) {}
+  protected onMouseLeave(e: EditorMouseEvent) {}
+  protected onMouseEnter(e: EditorMouseEvent) {}
+  protected onMouseWheel(e: WheelEvent) {}
+  protected onClick(e: MouseEvent) {}
   //keyEvent
-  protected onKeyDown(e: EditorKeyEvent) { }
-  protected onKeyUp(e: EditorKeyEvent) { }
-  protected onKeyPress(e: EditorKeyEvent) { }
+  protected onKeyDown(e: EditorKeyEvent) {}
+  protected onKeyUp(e: EditorKeyEvent) {}
+  protected onKeyPress(e: EditorKeyEvent) {}
   //mouse drag event
-  protected onMouseDragStart(e: EditorMouseEvent) { }
-  protected onMouseDrag(e: EditorMouseEvent) { }
-  protected onMouseDragEnd(e: EditorMouseEvent) { }
+  protected onMouseDragStart(e: EditorMouseEvent) {}
+  protected onMouseDrag(e: EditorMouseEvent) {}
+  protected onMouseDragEnd(e: EditorMouseEvent) {}
 
   //draw
-  protected onPreDraw(render: Render) { }
-  protected onDraw(render: Render) { }
-  protected onPostDraw(render: Render) { }
+  protected onPreDraw(render: Render) {}
+  protected onDraw(render: Render) {}
+  protected onPostDraw(render: Render) {}
   redraw() {
     this.render.clear();
     this.sendMessage("onPreDraw", this.render);
@@ -173,9 +190,9 @@ import { EditorPluginInfo } from "./VectorEditor";
     this.sendMessage("onPostDraw", this.render);
   }
   //callback
-  protected onSelectedShapeChange(shape?: Shape) { }
-  protected onSelectedToolChange(tool?: Tool) { }
-  protected onInitProperty(shape: Shape) { }
+  protected onSelectedShapeChange(shape?: Shape) {}
+  protected onSelectedToolChange(tool?: Tool) {}
+  protected onInitProperty(shape: Shape) {}
   protected onMessage(type: BaseEventType, ...args: any) {
     switch (type) {
       case "onMouseDown":
@@ -245,6 +262,10 @@ import { EditorPluginInfo } from "./VectorEditor";
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
         pe: e,
+        sp: new Point(e.clientX - rect.left, e.clientY - rect.top),
+        wp: this.screenToWorld(
+          new Point(e.clientX - rect.left, e.clientY - rect.top)
+        ),
       };
     };
     const makeEditorWheelEvent = (e: WheelEvent): EditorWheelEvent => {
@@ -258,13 +279,21 @@ import { EditorPluginInfo } from "./VectorEditor";
     };
     canvas.addEventListener("pointerdown", (e) => {
       const mEvent = makeEditorMouseEvent(e);
+      this._downPoint = mEvent.sp.clone();
+
       this.sendMessage("onMouseDown", mEvent);
     });
     canvas.addEventListener("pointermove", (e) => {
       const mEvent = makeEditorMouseEvent(e);
       this.sendMessage("onMouseMove", mEvent);
+
       if (this.properties.isDragging) {
         this.sendMessage("onMouseDrag", mEvent);
+      }
+      const length = mEvent.sp.clone().sub(this._downPoint).length();
+      if (!this.properties.isDragging && length > 5 && this.isMouseCaptured) {
+        this.properties.isDragging = true;
+        this.sendMessage("onMouseDragStart", mEvent);
       }
     });
     canvas.addEventListener("pointerup", (e) => {
@@ -272,7 +301,7 @@ import { EditorPluginInfo } from "./VectorEditor";
       this.sendMessage("onMouseUp", mEvent);
       if (this.properties.isDragging) {
         this.properties.isDragging = false;
-        this.sendMessage("onMouseDragEnd", e);
+        this.sendMessage("onMouseDragEnd", mEvent);
       }
     });
     canvas.addEventListener("pointerleave", (e) => {
@@ -325,13 +354,11 @@ import { EditorPluginInfo } from "./VectorEditor";
   //capture mouse
   capturePointer(e: EditorMouseEvent) {
     this.editorPanel.canvas.setPointerCapture(e.pe.pointerId);
-    if (!this.properties.isDragging) {
-      this.properties.isDragging = true;
-      this.sendMessage("onMouseDragStart", e);
-    }
+    this.isMouseCaptured = true;
   }
   releasePointer(e: EditorMouseEvent) {
     this.editorPanel.canvas.releasePointerCapture(e.pe.pointerId);
+    this.isMouseCaptured = false;
   }
 
   //conversion utils for point

@@ -1,5 +1,6 @@
 import { Color } from "./Color";
 import Point from "./Point";
+import { Rect } from "./Rect";
 
 interface Style {
   fillColor?: string;
@@ -8,7 +9,6 @@ interface Style {
   mode?: "stroke" | "stroke_fill" | "fill";
   font?: string;
   lineDash?: number[];
-
 }
 export class Render {
   constructor(public ctx: CanvasRenderingContext2D) {}
@@ -38,7 +38,7 @@ export class Render {
       strokeWidth = 1,
       mode = "fill",
       font = "18px Arial",
-      lineDash
+      lineDash,
     } = style;
     this.ctx.save();
     this.ctx.fillStyle = fillColor;
@@ -141,6 +141,10 @@ export class Render {
     this.ctx.rect(point.x, point.y, width, height);
     this.applyStyle(style);
   }
+  //draw Rect
+  public drawRect2(rect: Rect, style: Style = {}) {
+    this.drawRect(new Point(rect.x, rect.y), rect.width, rect.height, style);
+  }
   public drawText(point: Point, text: string, style: Style = {}) {
     this.ctx.beginPath();
     this.ctx.fillText(text, point.x, point.y);
@@ -149,7 +153,7 @@ export class Render {
   //clear canvas
   public clear(color = Color.fromHex("#eeeeee")) {
     this.drawRect(new Point(0, 0), this.width, this.height, {
-      fillColor: color.color,
+      fillColor: color.toString(),
       mode: "fill",
     });
   }
