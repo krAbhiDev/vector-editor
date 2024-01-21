@@ -60,6 +60,15 @@ class Handle {
           break;
       }
     });
+    plugin.addMessageHook((type, ...args) => {
+      switch (type) {
+        case "onPostDraw": {
+          const render = args[0] as Render;
+          this.draw(render);
+          break;
+        }
+      }
+    }, "after");
   }
   private updateRect() {
     if (this.plugin.editor.selectedShape) {
@@ -188,9 +197,6 @@ export class RectPlugin extends ToolPlugin {
             lineDash: [3, 5],
           }
         );
-
-        //if type is RectShape, draw size handle
-        this.drawHandles(render);
       }
     }
   }
