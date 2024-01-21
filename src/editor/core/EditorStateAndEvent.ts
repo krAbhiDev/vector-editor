@@ -34,7 +34,7 @@ export default abstract class EditorStateAndEvent extends Panel {
   protected _properties: EditorProperties = {
     documentWidth: 500,
     documentHeight: 500,
-    backgroundColor: Color.fromHex("#eeaaee"),
+    backgroundColor: Color.fromHex("#ffffff"),
     zoom: 1,
     maxZoom: 8,
     minZoom: 0.001,
@@ -120,14 +120,6 @@ export default abstract class EditorStateAndEvent extends Panel {
 
   //plugins
   addPlugin(pluginInfo: PluginInfo) {
-    // if (this._plugins.has(name)) {
-    //   console.error(`Plugin with name: ${name} already exists`);
-    //   return;
-    // }
-    // this._plugins.set(name, plugin);
-    // plugin.sendMessage("onActivate", this);
-    // console.log(`Plugin with name: ${name} added`);
-    //check if plugin with same name exist or not
     const plugin = this._pluginsInfo.find((p) => p.name == pluginInfo.name);
     if (plugin) {
       console.error(`Plugin with name: ${pluginInfo.name} already exists`);
@@ -185,7 +177,7 @@ export default abstract class EditorStateAndEvent extends Panel {
   protected onDraw(render: Render) {}
   protected onPostDraw(render: Render) {}
   redraw() {
-    this.render.clear();
+    this.render.clear(this.properties.backgroundColor);
     this.sendMessage("onPreDraw", this.render);
     this.sendMessage("onDraw", this.render);
     this.sendMessage("onPostDraw", this.render);

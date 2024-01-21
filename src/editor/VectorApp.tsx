@@ -31,7 +31,7 @@ export function VectorApp() {
   return (
     <div
       ref={mainRef}
-      className=" w-full fixed h-full p-5 flex justify-center self-center"
+      className=" bg-slate-100 w-full fixed h-full p-5 flex justify-center self-center"
     ></div>
   );
 }

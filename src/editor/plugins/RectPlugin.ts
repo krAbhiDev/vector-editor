@@ -85,10 +85,10 @@ export class RectPlugin extends ToolPlugin {
       this.isDrawing = false;
       //add RectShape to editor
       const rect = new RectShape();
-      rect.x = this.wdp.x;
-      rect.y = this.wdp.y;
-      rect.width = this.wOffset.x;
-      rect.height = this.wOffset.y;
+      rect.x = this.wOffset.x < 0 ? this.wdp.x + this.wOffset.x : this.wdp.x;
+      rect.y = this.wOffset.y < 0 ? this.wdp.y + this.wOffset.y : this.wdp.y;
+      rect.width = Math.abs(this.wOffset.x);
+      rect.height = Math.abs(this.wOffset.y);
       rect.color = this.color.toString();
       this.editor.addShape(rect);
       this.editor.selectedShape = rect;

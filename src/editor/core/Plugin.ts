@@ -69,9 +69,9 @@ export class Plugin {
   protected onMessage(type: PluginEventType, ...args: any) {
     switch (type) {
       case "onActivate":
-        console.log(type, args);
         this._editor = args[0];
         this.onActivate();
+        console.log(this.name,type);
         break;
       case "onDeActivate":
         this.onDeActivate();

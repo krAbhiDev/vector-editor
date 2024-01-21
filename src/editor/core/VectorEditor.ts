@@ -21,6 +21,8 @@ export default class VectorEditor extends EditorStateAndEvent {
     this.editorPanel.onStart();
     this.toolPanel.onStart();
     this.propertyPanel.onStart();
+    //clear canvas
+    this.redraw()
   }
   protected override createHTML() {
     const htmlDiv = document.createElement("div");
