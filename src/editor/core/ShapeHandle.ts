@@ -97,8 +97,9 @@ export class ShapeHandle {
     if (!this.isValid()) return;
     if (this.plugin.selectedShape) {
       render.drawRect2(this.rect, {
-        mode: "fill",
-        fillColor: this.color.toString(),
+        mode: "stroke_fill",
+        strokeColor: this.color.toString(),
+        fillColor:Color.fromHex("#ffffff").toString(),
       });
     }
   }
