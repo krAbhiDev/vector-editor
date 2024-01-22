@@ -26,18 +26,56 @@ export class Shape {
   }
 }
 
-export class CircleShape extends Shape {
-  radius = 10;
+export class EllipseShape extends Shape {
+  radiusX = 50;
+  radiusY = 30;
   isPointInside(x: number, y: number): boolean {
-    return Math.sqrt((x - this.x) ** 2 + (y - this.y) ** 2) <= this.radius;
+    return (
+      (x - this.x) ** 2 / this.radiusX ** 2 +
+        (y - this.y) ** 2 / this.radiusY ** 2 <=
+      1
+    );
   }
   getBound(): Rect {
     return new Rect(
-      this.x - this.radius,
-      this.y - this.radius,
-      this.radius * 2,
-      this.radius * 2
+      this.x - this.radiusX,
+      this.y - this.radiusY,
+      this.radiusX * 2,
+      this.radiusY * 2
     );
+  }
+
+  get left() {
+    return this.x - this.radiusX;
+  }
+  get top() {
+    return this.y - this.radiusY;
+  }
+  get right() {
+    return this.x + this.radiusX;
+  }
+  get bottom() {
+    return this.y + this.radiusY;
+  }
+  set left(val) {
+    const rad = Math.abs(this.right - val) * 0.5;
+    this.x = val + rad;
+    this.radiusX = rad;
+  }
+  set top(val) {
+    const rad = Math.abs(this.bottom - val) * 0.5;
+    this.y = val + rad;
+    this.radiusY = rad;
+  }
+  set right(val) {
+    const rad = Math.abs(this.left - val) * 0.5;
+    this.x = val - rad;
+    this.radiusX = rad;
+  }
+  set bottom(val) {
+    const rad = Math.abs(this.top - val) * 0.5;
+    this.y = val - rad;
+    this.radiusY = rad;
   }
 }
 export class RectShape extends Shape {

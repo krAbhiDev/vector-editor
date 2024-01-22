@@ -150,6 +150,12 @@ export class Render {
     this.ctx.fillText(text, point.x, point.y);
     this.applyStyle(style);
   }
+  //draw ellipse
+  public drawEllipse(point: Point, radiusX: number, radiusY: number, style: Style = {}) {
+    this.ctx.beginPath();
+    this.ctx.ellipse(point.x, point.y, radiusX, radiusY, 0, 0, Math.PI * 2);
+    this.applyStyle(style);
+  }
   //clear canvas
   public clear(color = Color.fromHex("#eeeeee")) {
     this.drawRect(new Point(0, 0), this.width, this.height, {

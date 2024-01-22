@@ -1,5 +1,5 @@
 import { setTimer } from "../../others/utils";
-import { CircleShape } from "./Shape";
+import { EllipseShape } from "./Shape";
 import { Observer } from "./Observer";
 import { Plugin } from "./Plugin";
 import EditorStateAndEvent from "./EditorStateAndEvent";

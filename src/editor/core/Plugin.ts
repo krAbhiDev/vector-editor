@@ -1,6 +1,6 @@
 import Point from "../../others/Point";
 import { Render } from "../../others/Render";
-import { CircleShape, Shape } from "./Shape";
+import { EllipseShape, Shape } from "./Shape";
 import { ShapeHandle } from "./ShapeHandle";
 import { Tool } from "./Tool";
 import VectorEditor from "./VectorEditor";
@@ -34,6 +34,9 @@ export class Plugin {
   }
   get shapes() {
     return this.editor.shapes;
+  }
+  get selectedShape() {
+    return this.editor.selectedShape;
   }
 
   sendMessage(type: PluginEventType, ...args: any) {

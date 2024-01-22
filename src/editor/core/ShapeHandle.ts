@@ -9,6 +9,7 @@ export type ShapeHandleLogicCallback = (
   e: EditorMouseEvent,
   shape: Shape
 ) => void;
+type ValidateCallback = (e?: Shape) => boolean;
 export class ShapeHandle {
   private rect = new Rect();
   private color = Color.fromHex("#000000");
@@ -18,9 +19,11 @@ export class ShapeHandle {
   constructor(
     public plugin: ToolPlugin,
     public anchor: Point = new Point(0, 0),
-    public logicCallback?: ShapeHandleLogicCallback
+    public logicCallback: ShapeHandleLogicCallback,
+    public validateCallback: ValidateCallback
   ) {
     plugin.addMessageHook((type, ...args) => {
+      if (!this.isValid()) return;
       switch (type) {
         case "onMouseDown": {
           const e = args[0] as EditorMouseEvent;
@@ -30,7 +33,6 @@ export class ShapeHandle {
           }
           break;
         }
-
         case "onMouseUp":
           this.isHandling = false;
           this.plugin.redraw();
@@ -47,8 +49,8 @@ export class ShapeHandle {
               : Color.fromHex("#000000");
             this.plugin.redraw();
           }
-          if (this.plugin.editor.selectedShape && this.isHandling) {
-            logicCallback?.(e, this.plugin.editor.selectedShape);
+          if (this.plugin.selectedShape && this.isHandling) {
+            this.logicCallback(e, this.plugin.selectedShape);
             // this.resize(e);
             this.update();
             plugin.redraw();
@@ -73,7 +75,11 @@ export class ShapeHandle {
       }
     }, "after");
   }
+  private isValid() {
+    return this.validateCallback(this.plugin.selectedShape);
+  }
   update() {
+    if (!this.isValid()) return;
     //for all plugin handle
     for (const handle of this.plugin.handles) {
       handle.updateRect();
@@ -88,7 +94,8 @@ export class ShapeHandle {
     }
   }
   draw(render: Render) {
-    if (this.plugin.editor.selectedShape) {
+    if (!this.isValid()) return;
+    if (this.plugin.selectedShape) {
       render.drawRect2(this.rect, {
         mode: "fill",
         fillColor: this.color.toString(),
